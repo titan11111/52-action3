@@ -517,7 +517,10 @@
             const signMesh = new THREE.Mesh(signGeometry, signMaterial);
             signMesh.position.set(0, 1.5, 4.06);
             houseGroup.add(signMesh);
-            
+
+            // Scale the destination house to 200% of its original size
+            houseGroup.scale.set(2, 2, 2);
+
             const destPosition = new THREE.Vector3(
                 (Math.random() - 0.5) * 200,
                 3,
