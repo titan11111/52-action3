@@ -161,6 +161,7 @@
         <div id="message-box">
             <h2 id="message-title">爆速宅配人 3D</h2>
             <p id="message-text">WASDまたは十字キーで移動、スペースで二段ジャンプ、Shiftでスライディング。<br>クリックしてゲームを開始！</p>
+            <p id="best-time-text">ベストタイム: --:--</p>
             <div id="upgrade-section" style="display: none;">
                 <p>現在のステータス:</p>
                 <div class="stats-container">
@@ -183,6 +184,7 @@
         <div id="hud" style="display:none;">
             <div>タイム: <span id="time-display">00:00</span></div>
             <div>スコア: <span id="score-display">0</span></div>
+            <div>ベスト: <span id="best-time-display">--:--</span></div>
         </div>
     </div>
 
@@ -213,6 +215,7 @@
         let hasPackage = true; // パッケージを持っているかどうかのフラグ
         let packageMesh;
         let destinationMarkers = [];
+        let bestTime = localStorage.getItem('bestTime') ? parseFloat(localStorage.getItem('bestTime')) : null;
 
         // プレイヤーの強化可能ステータス
         let playerSpeed = 10; // 速度を2倍に
@@ -225,10 +228,12 @@
         const messageBox = document.getElementById('message-box');
         const messageTitle = document.getElementById('message-title');
         const messageText = document.getElementById('message-text');
+        const bestTimeText = document.getElementById('best-time-text');
         const startButton = document.getElementById('start-button');
         const hud = document.getElementById('hud');
         const timeDisplay = document.getElementById('time-display');
         const scoreDisplay = document.getElementById('score-display');
+        const bestTimeDisplay = document.getElementById('best-time-display');
         const upgradeSection = document.getElementById('upgrade-section');
         const speedStat = document.getElementById('speed-stat');
         const jumpStat = document.getElementById('jump-stat');
@@ -840,6 +845,8 @@
             if (isTouchDevice()) {
                  messageText.innerHTML = `左のジョイスティックで移動、右のボタンでジャンプ。<br>画面をタップしてゲームを開始！`;
             }
+            bestTimeText.textContent = bestTime ? `ベストタイム: ${formatTime(bestTime)}` : 'ベストタイム: --:--';
+            bestTimeDisplay.textContent = bestTime ? formatTime(bestTime) : '--:--';
             upgradeSection.style.display = 'none';
             hud.style.display = 'none';
         }
@@ -868,6 +875,7 @@
             isGameActive = false;
             Tone.Transport.stop();
             let finalScore = success ? score + 1000 : score;
+            let deliveryTime = elapsedTime;
             let rank = "C";
             if (finalScore > 2000) rank = "S";
             else if (finalScore > 1500) rank = "A";
@@ -878,7 +886,15 @@
             playerMesh.remove(packageMesh);
 
             messageTitle.textContent = success ? "配達完了！" : message;
-            messageText.innerHTML = `最終スコア: ${finalScore}<br>評価: ${rank}`;
+            messageText.innerHTML = `最終スコア: ${finalScore}<br>評価: ${rank}<br>タイム: ${formatTime(deliveryTime)}`;
+            if (success) {
+                if (bestTime === null || deliveryTime < bestTime) {
+                    bestTime = deliveryTime;
+                    localStorage.setItem('bestTime', bestTime.toString());
+                }
+                bestTimeDisplay.textContent = formatTime(bestTime);
+                bestTimeText.textContent = `ベストタイム: ${formatTime(bestTime)}`;
+            }
             upgradeSection.style.display = 'flex';
             updateStatsDisplay();
             startButton.textContent = "もう一度プレイ";
