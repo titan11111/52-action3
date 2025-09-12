@@ -188,7 +188,7 @@
             </div>
             <button id="start-button">スタート</button>
         </div>
-    <div id="time-container" style="display:none;">タイム: <span id="time-display">00:00</span></div>
+    <div id="time-container" style="display:none;">プレイタイム: <span id="time-display">00:00</span></div>
     <div id="hud" style="display:none;">
         <div>スコア: <span id="score-display">0</span></div>
         <div>ベスト: <span id="best-time-display">--:--</span></div>
@@ -682,7 +682,7 @@
             // Update time and score
             elapsedTime = (Date.now() - startTime) / 1000;
             score = Math.floor(elapsedTime * scorePerSecond);
-            timeDisplay.textContent = formatTime(gameDuration - elapsedTime);
+            timeDisplay.textContent = formatTime(elapsedTime);
             scoreDisplay.textContent = score;
 
             if (elapsedTime >= gameDuration) {
